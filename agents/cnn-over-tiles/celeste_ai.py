@@ -87,7 +87,7 @@ class CelesteAI(nn.Module):
         ], dtype=torch.float32).unsqueeze(0)
 
         # Build occupancy map tensor
-        # Shape : (batch=1, channels=3, height=31, width=31)
+        # Shape : (batch=1, channels=5, height=31, width=31)
         occupancy = torch.tensor([
             player_state[SessionData.OCCUPANCY_MAP.value:SessionData.OCCUPANCY_MAP.value+self.OCCUPANCY_MAP_X*self.OCCUPANCY_MAP_Y]
         ], dtype=torch.long).reshape(self.OCCUPANCY_MAP_X, self.OCCUPANCY_MAP_Y)

@@ -25,7 +25,6 @@ class TrainingController(BaseController):
             Une liste de 7 inputs (floats) représentant les actions à effectuer. Chaque float doit être dans la plage [0, 1]. Si la valeur est supérieure à 0.5, l'action correspondante sera effectuée.
             Voir SessionData.Inputs pour les détails sur la signification de chaque input.
         """
-        # TODO
         output_tensor = self.model.map_and_forward(player_state)
         actions, log_prob = self._decode_action(output_tensor)
         self.log_probs.append(log_prob)
@@ -35,7 +34,7 @@ class TrainingController(BaseController):
         return actions
 
     def end_sequence(self, player_state):
-        self.reward_tracker.add_reward(player_state, None)  # Add final reward without log_prob
+        self.reward_tracker.add_reward(player_state)  # Add final reward without log_prob
         loss = self.reward_tracker.calculate_loss(self.log_probs)
         
         self.optimizer.zero_grad()
@@ -52,13 +51,15 @@ class TrainingController(BaseController):
         self.reward_tracker.reset()  # Reset the reward tracker for the next sequence
 
     def _decode_action(self, output_tensor):
+            logits = output_tensor[0]
+
             # Create distributions for each action
             distributions = [
-                torch.distributions.Categorical(logits=output_tensor[0:3]),  # Logits for left, right, none
-                torch.distributions.Categorical(logits=output_tensor[3:6]),    # Logits for up, down, none
-                torch.distributions.Bernoulli(logits=output_tensor[6]),   # Logit for jump
-                torch.distributions.Bernoulli(logits=output_tensor[7]),  # Logit for dash
-                torch.distributions.Bernoulli(logits=output_tensor[8])   # Logit for grab
+                torch.distributions.Categorical(logits=logits[0:3]),  # Logits for left, right, none
+                torch.distributions.Categorical(logits=logits[3:6]),    # Logits for up, down, none
+                torch.distributions.Bernoulli(logits=logits[6]),   # Logit for jump
+                torch.distributions.Bernoulli(logits=logits[7]),  # Logit for dash
+                torch.distributions.Bernoulli(logits=logits[8])   # Logit for grab
             ]
     
             # Sample actions from the distributions

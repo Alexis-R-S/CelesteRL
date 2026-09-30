@@ -29,7 +29,7 @@ class RewardTracker:
 
         loss = torch.stack([
             -log_prob * G
-            for log_prob, G in zip(self.log_probs, returns)
+            for log_prob, G in zip(log_probs, returns)
         ]).sum()
 
         return loss

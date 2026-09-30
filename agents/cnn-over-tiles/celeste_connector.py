@@ -1,7 +1,7 @@
 from CelestePythonInterface import SocketInterface, SessionParameters, SocketServer
 
 class CelesteConnector:
-    def __init__(self, level="1", area_key=1, area_mode=0, timeout_seconds=999999999999, objective_x=282, objective_y=-24):
+    def __init__(self, level="1", area_key=1, area_mode=0, timeout_seconds=10, objective_x=282, objective_y=-24):
         """Initialise le connecteur Celeste avec les paramètres de session spécifiés.
         Args:
             level (str): Le niveau à charger.
