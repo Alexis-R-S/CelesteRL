@@ -12,11 +12,18 @@ class RewardTracker:
         distance = self._calculate_distance(player_state)
         if self.previous_distance is None:
             self.previous_distance = distance
-            return 0
+            return
 
         reward = self.previous_distance - distance
         self.rewards.append(reward)
         self.previous_distance = distance
+
+    def compound_end_reward(self, player_state):
+        # If the player has reached the objective, we give a positive reward
+        if player_state[SessionData.NUMBER_OF_LEVELS_FINISHED.value] > 0:
+            self.rewards[-1] += 100.0  # Arbitrary positive reward for reaching the objective
+        elif player_state[SessionData.SECONDS_ELAPSED.value] <= 10.0:  # Assuming 10 seconds is the timeout
+            self.rewards[-1] -= 50.0  # Arbitrary negative reward for dying before timeout
 
     def _calculate_distance(self, player_state):
         x_distance = player_state[SessionData.X_DISTANCE_TO_OBJECTIVE.value]

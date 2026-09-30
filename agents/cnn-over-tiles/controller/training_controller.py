@@ -35,6 +35,7 @@ class TrainingController(BaseController):
 
     def end_sequence(self, player_state):
         self.reward_tracker.add_reward(player_state)  # Add final reward without log_prob
+        self.reward_tracker.compound_end_reward(player_state)  # Adjust the final reward based on the outcome
         loss = self.reward_tracker.calculate_loss(self.log_probs)
         
         self.optimizer.zero_grad()
