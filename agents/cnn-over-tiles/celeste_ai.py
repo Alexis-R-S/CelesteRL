@@ -38,9 +38,14 @@ class CelesteAI(nn.Module):
         self.fc = nn.Sequential(
             nn.Linear(32 + 12, 64),
             nn.ReLU(),
-            nn.Linear(64, 5)
+            nn.Linear(64, 9)
         )
-        # 5 outputs : right/left, up/down, jump, dash, grab
+        # 9 outputs :
+        # - 3 logits for left/right/none,
+        # - 3 logits for up/down/none
+        # - 1 logit for jump
+        # - 1 logit for dash
+        # - 1 logit for grab
 
     def forward(self, occupancy_map, state_variables):
         cnn_features = self.cnn(occupancy_map)
@@ -57,17 +62,6 @@ class CelesteAI(nn.Module):
     def map_and_forward(self, player_state):
         state_variables, occupancy_map = self._map_player_state(player_state)
         return self.forward(occupancy_map, state_variables)
-
-    def decode_action(self, output_tensor):
-        return [
-            1 if output_tensor[..., 0] > self.ACTION_THRESHOLD else 0,  # right
-            1 if output_tensor[..., 0] < -self.ACTION_THRESHOLD else 0, # left
-            1 if output_tensor[..., 1] < -self.ACTION_THRESHOLD else 0, # up
-            1 if output_tensor[..., 1] > self.ACTION_THRESHOLD else 0,  # down
-            1 if output_tensor[..., 2] > self.ACTION_THRESHOLD else 0,   # jump
-            1 if output_tensor[..., 3] > self.ACTION_THRESHOLD else 0,  # dash
-            1 if output_tensor[..., 4] > self.ACTION_THRESHOLD else 0   # grab
-        ]
 
     def _map_player_state(self, player_state):
         # Input mapping
@@ -100,3 +94,4 @@ class CelesteAI(nn.Module):
         occupancy = F.one_hot(occupancy, num_classes=self.OCCUPANCY_MAP_Z).permute(2, 0, 1).unsqueeze(0).float()
 
         return (input_tensor, occupancy)
+    
