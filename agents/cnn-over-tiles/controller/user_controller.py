@@ -23,3 +23,6 @@ class UserController(BaseController):
 
     def end_sequence(self, player_state):
         pass
+
+    def end_session(self, save_checkpoint_path=None):
+        pass

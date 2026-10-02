@@ -20,3 +20,7 @@ class BaseController(ABC):
             player_state: L'état final du joueur fourni par l'interface de communication. Voir SessionData pour les détails sur la structure de player_state.
         """
         pass
+
+    @abstractmethod
+    def end_session(self, save_checkpoint_path=None):
+        pass
