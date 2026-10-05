@@ -1,11 +1,18 @@
 from CelestePythonInterface import SessionData
+import torch
 
 from celeste_ai import CelesteAI
 from controller.base_controller import BaseController
 
 class InferenceController(BaseController):
-    def __init__(self):
+    def __init__(self, checkpoint_path=None):
         self.model = CelesteAI()
+        if checkpoint_path:
+            self.load_model(checkpoint_path)
+
+    def load_model(self, path):
+        checkpoint = torch.load(path)
+        self.model.load_state_dict(checkpoint["model"])
 
     def update(self, player_state):
         """Met à jour les actions du joueur en fonction de l'état actuel.
@@ -19,6 +26,9 @@ class InferenceController(BaseController):
         return actions
 
     def end_sequence(self, player_state):
+        pass
+
+    def end_session(self, save_checkpoint_path=None):
         pass
 
     def decode_action(self, output_tensor):

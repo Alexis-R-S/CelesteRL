@@ -5,11 +5,12 @@ from controller.base_controller import BaseController
 from reward_tracker import RewardTracker
 
 import torch
+import os
 
 class TrainingController(BaseController):
     batch_size = 10     # Number of episodes to accumulate before performing a training step
 
-    def __init__(self):
+    def __init__(self, checkpoint_path=None):
         self.model = CelesteAI()
         self.reward_tracker = RewardTracker()
         self.log_probs = []     # Log probs of actions taken during the current episode
@@ -18,6 +19,9 @@ class TrainingController(BaseController):
             self.model.parameters(),
             lr=1e-3
         )
+
+        if checkpoint_path:
+            self.load_model(checkpoint_path)
 
         self.batch_losses = []  # Store losses for each episode in the batch
 
@@ -49,6 +53,22 @@ class TrainingController(BaseController):
 
         self.log_probs.clear()
         self.reward_tracker.reset()  # Reset the reward tracker for the next sequence
+
+    def end_session(self, save_checkpoint_path=None):
+        if save_checkpoint_path:
+            self.save_model(save_checkpoint_path)
+
+    def save_model(self, checkpoint_path):
+        os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
+        torch.save({
+            "model": self.model.state_dict(),
+            "optimizer": self.optimizer.state_dict()
+        }, checkpoint_path)
+
+    def load_model(self, path):
+        checkpoint = torch.load(path)
+        self.model.load_state_dict(checkpoint["model"])
+        self.optimizer.load_state_dict(checkpoint["optimizer"])
 
     def _perform_training_step(self):
         average_loss = torch.stack(self.batch_losses).mean()    # Calculate the average loss over the batch
