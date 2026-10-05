@@ -1,8 +1,8 @@
 from CelestePythonInterface import SessionData
 
-from celeste_ai import CelesteAI
+from cnn_over_tiles.celeste_ai import CelesteAI
 from controller.base_controller import BaseController
-from reward_tracker import RewardTracker
+from cnn_over_tiles.reward_tracker import RewardTracker
 
 import torch
 import os
