@@ -44,5 +44,8 @@ for _ in range(batch_limit):    # Control goes back here after each player death
 
 if args.save:
     checkpoint_path = "checkpoints/" + args.save
-    print(f"Saving model to {checkpoint_path}")
-    controller.end_session(save_checkpoint_path=checkpoint_path)
+else:
+    checkpoint_path = "checkpoints/default.pth"
+
+print(f"Saving model to {checkpoint_path}")
+controller.end_session(save_checkpoint_path=checkpoint_path)
