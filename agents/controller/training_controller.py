@@ -1,5 +1,5 @@
 from controller.base_controller import BaseController
-from cnn_over_tiles.ai_trainer import AiTrainer
+from celeste_agents.cnn_over_tiles.ai_trainer import AiTrainer
 
 class TrainingController(BaseController):
     def __init__(self, checkpoint_path=None):

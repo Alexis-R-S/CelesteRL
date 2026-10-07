@@ -1,7 +1,7 @@
 from CelestePythonInterface import SessionData
 
-from cnn_over_tiles.celeste_ai import CelesteAI
-from cnn_over_tiles.reward_tracker import RewardTracker
+from celeste_agents.cnn_over_tiles.celeste_ai import CelesteAI
+from celeste_agents.cnn_over_tiles.reward_tracker import RewardTracker
 
 import torch
 import os

@@ -1,7 +1,7 @@
 from CelestePythonInterface import SessionData
 import torch
 
-from cnn_over_tiles.celeste_ai import CelesteAI
+from celeste_agents.cnn_over_tiles.celeste_ai import CelesteAI
 from controller.base_controller import BaseController
 
 class InferenceController(BaseController):
