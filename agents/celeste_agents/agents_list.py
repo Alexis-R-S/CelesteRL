@@ -2,6 +2,8 @@ AGENTS = {
     "cnn_over_tiles": {
         "module": "cnn_over_tiles",
         "trainer": "ai_trainer",
-        "class": "AiTrainer"
+        "trainer_class": "AiTrainer",
+        "inferencer": "inferencer",
+        "inferencer_class": "Inferencer"
     }
 }

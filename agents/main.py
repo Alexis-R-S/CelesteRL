@@ -32,7 +32,10 @@ elif args.user:
     controller = UserController()
 else:
     print("Launching AI in inference mode")
-    controller = InferenceController(checkpoint_path=checkpoint_load_path)
+    agent_name = os.getenv('AGENT')
+    if not agent_name:
+        raise RuntimeError("AGENT is not defined in .env")
+    controller = InferenceController(agent_name=agent_name, checkpoint_path=checkpoint_load_path)
 
 if args.limit is None:
     print("No limit specified, running indefinitely.")

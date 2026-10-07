@@ -25,7 +25,7 @@ class TrainingController(BaseController):
 
         trainer_module = agent_info.get('module')
         trainer_file = agent_info.get('trainer')
-        trainer_class = agent_info.get('class')
+        trainer_class = agent_info.get('trainer_class')
 
         try:
             module = importlib.import_module(f"celeste_agents.{trainer_module}.{trainer_file}")
