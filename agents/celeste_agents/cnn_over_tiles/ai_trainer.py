@@ -1,13 +1,11 @@
-from CelestePythonInterface import SessionData
-
-from celeste_ai import CelesteAI
-from controller.base_controller import BaseController
-from reward_tracker import RewardTracker
+from celeste_agents.base_ai_trainer import BaseAiTrainer
+from celeste_agents.cnn_over_tiles.celeste_ai import CelesteAI
+from celeste_agents.cnn_over_tiles.reward_tracker import RewardTracker
 
 import torch
 import os
 
-class TrainingController(BaseController):
+class AiTrainer (BaseAiTrainer):
     batch_size = 10     # Number of episodes to accumulate before performing a training step
 
     def __init__(self, checkpoint_path=None):
@@ -25,7 +23,7 @@ class TrainingController(BaseController):
 
         self.batch_losses = []  # Store losses for each episode in the batch
 
-    def update(self, player_state):
+    def next_state(self, player_state):
         """Met à jour les actions du joueur en fonction de l'état actuel.
         Args:
             player_state: L'état actuel du joueur fourni par l'interface de communication. Voir SessionData pour les détails sur la structure de player_state.
@@ -41,7 +39,7 @@ class TrainingController(BaseController):
 
         return actions
 
-    def end_sequence(self, player_state):
+    def end_episode(self, player_state):
         self.reward_tracker.add_reward(player_state)  # Add final reward without log_prob
         self.reward_tracker.compound_end_reward(player_state)  # Adjust the final reward based on the outcome
         loss = self.reward_tracker.calculate_loss(self.log_probs)

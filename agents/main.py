@@ -2,8 +2,12 @@ from celeste_connector import CelesteConnector
 from controller.inference_controller import InferenceController
 from controller.training_controller import TrainingController
 from controller.user_controller import UserController
-import argparse
 
+import argparse
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Celeste AI Controller")
@@ -18,13 +22,20 @@ checkpoint_load_path = "checkpoints/" + args.load if args.load else None
 
 if args.train:
     print("Launching AI in training mode")
-    controller = TrainingController(checkpoint_path=checkpoint_load_path)
+    agent_name = os.getenv('AGENT')
+    if not agent_name:
+        raise RuntimeError("AGENT is not defined in .env")
+    controller = TrainingController(agent_name=agent_name, checkpoint_path=checkpoint_load_path)
+
 elif args.user:
     print("Launching AI in user mode")
     controller = UserController()
 else:
     print("Launching AI in inference mode")
-    controller = InferenceController(checkpoint_path=checkpoint_load_path)
+    agent_name = os.getenv('AGENT')
+    if not agent_name:
+        raise RuntimeError("AGENT is not defined in .env")
+    controller = InferenceController(agent_name=agent_name, checkpoint_path=checkpoint_load_path)
 
 if args.limit is None:
     print("No limit specified, running indefinitely.")
@@ -44,5 +55,8 @@ for _ in range(batch_limit):    # Control goes back here after each player death
 
 if args.save:
     checkpoint_path = "checkpoints/" + args.save
-    print(f"Saving model to {checkpoint_path}")
-    controller.end_session(save_checkpoint_path=checkpoint_path)
+else:
+    checkpoint_path = "checkpoints/default.pth"
+
+print(f"Saving model to {checkpoint_path}")
+controller.end_session(save_checkpoint_path=checkpoint_path)
