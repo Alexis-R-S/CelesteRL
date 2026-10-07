@@ -1,12 +1,11 @@
-from CelestePythonInterface import SessionData
-
+from celeste_agents.base_ai_trainer import BaseAiTrainer
 from celeste_agents.cnn_over_tiles.celeste_ai import CelesteAI
 from celeste_agents.cnn_over_tiles.reward_tracker import RewardTracker
 
 import torch
 import os
 
-class AiTrainer:
+class AiTrainer (BaseAiTrainer):
     batch_size = 10     # Number of episodes to accumulate before performing a training step
 
     def __init__(self, checkpoint_path=None):

@@ -2,8 +2,12 @@ from celeste_connector import CelesteConnector
 from controller.inference_controller import InferenceController
 from controller.training_controller import TrainingController
 from controller.user_controller import UserController
-import argparse
 
+import argparse
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Celeste AI Controller")
@@ -18,7 +22,11 @@ checkpoint_load_path = "checkpoints/" + args.load if args.load else None
 
 if args.train:
     print("Launching AI in training mode")
-    controller = TrainingController(checkpoint_path=checkpoint_load_path)
+    agent_name = os.getenv('AGENT')
+    if not agent_name:
+        raise RuntimeError("AGENT is not defined in .env")
+    controller = TrainingController(agent_name=agent_name, checkpoint_path=checkpoint_load_path)
+
 elif args.user:
     print("Launching AI in user mode")
     controller = UserController()
