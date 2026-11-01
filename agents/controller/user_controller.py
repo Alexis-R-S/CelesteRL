@@ -26,3 +26,7 @@ class UserController(BaseController):
 
     def end_session(self, save_checkpoint_path=None):
         pass
+
+    def get_runs_multiplier(self):
+        """ Get the multiplier for the number of runs to perform in a session. Typically batch size for training agents."""
+        return 1  # User input typically runs one episode at a time

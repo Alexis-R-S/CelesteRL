@@ -56,6 +56,9 @@ class AiTrainer (BaseAiTrainer):
         if save_checkpoint_path:
             self.save_model(save_checkpoint_path)
 
+    def get_batch_size(self):
+        return self.batch_size
+
     def save_model(self, checkpoint_path):
         os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
         torch.save({

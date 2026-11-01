@@ -16,6 +16,9 @@ class InferenceController(BaseController):
     def end_session(self, save_checkpoint_path=None):
         pass
 
+    def get_runs_multiplier(self):
+        return 1  # Inference typically runs one episode at a time
+
     def _load_inferencer(self, agent_name):
         agent_info = AGENTS.get(agent_name)
         if not agent_info:

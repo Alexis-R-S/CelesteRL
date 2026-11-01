@@ -18,6 +18,9 @@ class TrainingController(BaseController):
     def end_session(self, save_checkpoint_path):
         return self.trainer.end_session(save_checkpoint_path)
 
+    def get_runs_multiplier(self):
+        return self.trainer.get_batch_size()
+
     def _load_trainer(self, agent_name):
         agent_info = AGENTS.get(agent_name)
         if not agent_info:

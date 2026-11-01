@@ -16,3 +16,7 @@ class BaseAiTrainer (ABC):
     @abstractmethod
     def end_session(self, save_checkpoint_path=None):
         pass
+
+    @abstractmethod
+    def get_batch_size(self):
+        pass

@@ -42,7 +42,7 @@ if args.limit is None:
     batch_limit = float('inf')  # Run indefinitely
 else:
     print(f"Running for {args.limit} batches.")
-    batch_limit = args.limit
+    batch_limit = args.limit * controller.get_runs_multiplier() 
 
 celeste_conn = CelesteConnector()
 celeste_conn.connect()
