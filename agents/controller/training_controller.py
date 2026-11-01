@@ -1,13 +1,13 @@
 import importlib
 
+from celeste_agents.base_ai_trainer import BaseAiTrainer
 from controller.base_controller import BaseController
-from celeste_agents.cnn_over_tiles.ai_trainer import AiTrainer
 from celeste_agents.agents_list import AGENTS
 
 class TrainingController(BaseController):
-    def __init__(self, agent_name, checkpoint_path=None):
+    def __init__(self, agent_name, load_checkpoint_path=None, save_checkpoint_folder=None):
         # Load trainer and create instance
-        self.trainer = self._load_trainer(agent_name)(checkpoint_path)
+        self.trainer: BaseAiTrainer = self._load_trainer(agent_name)(load_checkpoint_path, save_checkpoint_folder)
 
     def update(self, player_state):
         return self.trainer.next_state(player_state)
@@ -16,9 +16,9 @@ class TrainingController(BaseController):
         return self.trainer.end_episode(player_state)
         
     def end_session(self, save_checkpoint_path):
-        return self.trainer.end_session(save_checkpoint_path)
+        return self.trainer.save_model(save_checkpoint_path)
 
-    def _load_trainer(self, agent_name):
+    def _load_trainer(self, agent_name) -> BaseAiTrainer:
         agent_info = AGENTS.get(agent_name)
         if not agent_info:
             raise ValueError(f"Unknown agent {agent_name}")
