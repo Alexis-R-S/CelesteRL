@@ -5,25 +5,26 @@ from CelestePythonInterface import SocketInterface, SessionParameters, SocketSer
 from data.level_selector import LevelSelector
 
 class CelesteConnector:
-    def __init__(self, chapters=None, sides=None, timeout_seconds=10, objective_x=282, objective_y=-24):
+    def __init__(self, chapters=None, sides=None, room_choosing_mode: str="random", timeout_seconds=10, objective_x=282, objective_y=-24):
         """Initialise le connecteur Celeste avec les paramètres de session spécifiés.
         Args:
             chapters (int): Les chapitres autorisés (clés de la zone)
             sides (int): Les sides de chapitres autorisés (modes du chapitre)
+            room_choosing_mode: Mode de choix des rooms. Disponible: "random"
             timeout_seconds (int): Le temps maximum de la session en secondes.
             objective_x (int): La coordonnée X de l'objectif.
             objective_y (int): La coordonnée Y de l'objectif.
         """
         level_selector = LevelSelector()
         self.rooms_pool = level_selector.get_level_pool(chapters, sides)
+        self._room_choosing_mode = room_choosing_mode
 
         self.params = SessionParameters()
         self.params.TimeoutSeconds = timeout_seconds
         self.params.ObjectiveXCoordinate = objective_x
         self.params.ObjectiveYCoordinate = objective_y
 
-        self.randomize_level()
-
+        self.next_room()
         self.interface = None
 
     def connect(self):
@@ -56,8 +57,15 @@ class CelesteConnector:
 
         return final_state
 
-    def randomize_level(self):
-        rdm_chap, rdm_side, rdm_room = random.choice(self.rooms_pool)
-        self.params.AreaKey = rdm_chap
-        self.params.AreaMode = rdm_side
-        self.params.Level = rdm_room
+    def next_room(self):
+        match self._room_choosing_mode:
+            case "random":
+                self._set_room(random.choice(self.rooms_pool))
+            case _:
+                raise ValueError(f"Non valid room choosing mode {self._room_choosing_mode}")
+
+    def _set_room(self, new_room: tuple):
+        chap, side, room = new_room
+        self.params.AreaKey = chap
+        self.params.AreaMode = side
+        self.params.Level = room
