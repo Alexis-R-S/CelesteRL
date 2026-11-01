@@ -1,23 +1,28 @@
+import random
+
 from CelestePythonInterface import SocketInterface, SessionParameters, SocketServer
 
+from data.level_selector import LevelSelector
+
 class CelesteConnector:
-    def __init__(self, level="1", area_key=1, area_mode=0, timeout_seconds=10, objective_x=282, objective_y=-24):
+    def __init__(self, chapters=None, sides=None, timeout_seconds=10, objective_x=282, objective_y=-24):
         """Initialise le connecteur Celeste avec les paramètres de session spécifiés.
         Args:
-            level (str): Le niveau à charger.
-            area_key (int): La clé de la zone à charger.
-            area_mode (int): Le mode de la zone à charger.
+            chapters (int): Les chapitres autorisés (clés de la zone)
+            sides (int): Les sides de chapitres autorisés (modes du chapitre)
             timeout_seconds (int): Le temps maximum de la session en secondes.
             objective_x (int): La coordonnée X de l'objectif.
             objective_y (int): La coordonnée Y de l'objectif.
         """
+        level_selector = LevelSelector()
+        self.rooms_pool = level_selector.get_level_pool(chapters, sides)
+
         self.params = SessionParameters()
-        self.params.Level = level
-        self.params.AreaKey = area_key
-        self.params.AreaMode = area_mode
         self.params.TimeoutSeconds = timeout_seconds
         self.params.ObjectiveXCoordinate = objective_x
         self.params.ObjectiveYCoordinate = objective_y
+
+        self.randomize_level()
 
         self.interface = None
 
@@ -50,3 +55,9 @@ class CelesteConnector:
         final_state = self.interface.run()
 
         return final_state
+
+    def randomize_level(self):
+        rdm_chap, rdm_side, rdm_room = random.choice(self.rooms_pool)
+        self.params.AreaKey = rdm_chap
+        self.params.AreaMode = rdm_side
+        self.params.Level = rdm_room

@@ -63,6 +63,7 @@ celeste_conn.set_agent(controller.update)
 for _ in range(batch_limit):    # Control goes back here after each player death
     final_state = celeste_conn.run()
     controller.end_sequence(final_state)
+    celeste_conn.randomize_level()  # Set a random level for the next run
 
 # Saving the model after training
 checkpoint_path = path.join(checkpoint_folder, 'model.pth')
