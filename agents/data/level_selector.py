@@ -9,11 +9,12 @@ class LevelSelector:
     def __init__(self):
         self.rooms_data = self._load_level_data()
 
-    def get_level_pool(self, chapter: Optional[int]=None, side: Optional[int]=None):
+    def get_level_pool(self, chapter: Optional[int]=None, side: Optional[int]=None, room: Optional[str]=None):
         """Fetch the level pool for the given chapter and side
         Args:
             chapter: chapter selection. Leave to None to select all chapters
             side: side selection. Leave to None to select all sides
+            room: room selection. Leave to None to select all rooms
         Returns:
             Available rooms in format (chapter, side, room)
         """
@@ -21,7 +22,9 @@ class LevelSelector:
             return self._load_every_level()
         if side is None:
             return self._load_every_sides(chapter)
-        return self._load_one_side(chapter, side)
+        if room is None:
+            return self._load_one_side(chapter, side)
+        return self._load_one_room(chapter, side, room)
 
     def _load_level_data(self):
         with open(json_data_path, "r", encoding="utf-8") as file:
@@ -47,3 +50,9 @@ class LevelSelector:
 
     def _load_one_side(self, chapter: int, side: int):
         return [(chapter, side, room) for room in self.rooms_data[chapter][side]]
+
+    def _load_one_room(self, chapter: int, side: int, room: str):
+        if room in self.rooms_data[chapter][side]:
+            return [(chapter, side, room)]
+        else:
+            raise ValueError(f"Room {room} not found in chapter {chapter}, side {side}")

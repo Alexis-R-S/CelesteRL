@@ -5,18 +5,19 @@ from CelestePythonInterface import SocketInterface, SessionParameters, SocketSer
 from data.level_selector import LevelSelector
 
 class CelesteConnector:
-    def __init__(self, chapters=None, sides=None, room_choosing_mode: str="random", timeout_seconds=10, objective_x=282, objective_y=-24):
+    def __init__(self, chapter=None, side=None, room=None, room_choosing_mode: str="random", timeout_seconds=10, objective_x=282, objective_y=-24):
         """Initialise le connecteur Celeste avec les paramètres de session spécifiés.
         Args:
-            chapters (int): Les chapitres autorisés (clés de la zone)
-            sides (int): Les sides de chapitres autorisés (modes du chapitre)
+            chapter (int): Le chapitre autorisé (clé de la zone). None pour tous les chapitres.
+            side (int): Le côté du chapitre autorisé (mode du chapitre). None pour tous les côtés.
+            room (str): Le nom de la room autorisée. None pour toutes les rooms.
             room_choosing_mode: Mode de choix des rooms. Disponible: "random"
             timeout_seconds (int): Le temps maximum de la session en secondes.
             objective_x (int): La coordonnée X de l'objectif.
             objective_y (int): La coordonnée Y de l'objectif.
         """
         level_selector = LevelSelector()
-        self.rooms_pool = level_selector.get_level_pool(chapters, sides)
+        self.rooms_pool = level_selector.get_level_pool(chapter, side, room)
         self._room_choosing_mode = room_choosing_mode
 
         self.params = SessionParameters()
