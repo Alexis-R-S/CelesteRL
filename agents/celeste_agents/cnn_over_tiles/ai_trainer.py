@@ -1,3 +1,5 @@
+from os import path
+
 from celeste_agents.base_ai_trainer import BaseAiTrainer
 from celeste_agents.cnn_over_tiles.celeste_ai import CelesteAI
 from celeste_agents.cnn_over_tiles.reward_tracker import RewardTracker
@@ -8,7 +10,7 @@ import os
 class AiTrainer (BaseAiTrainer):
     batch_size = 10     # Number of episodes to accumulate before performing a training step
 
-    def __init__(self, checkpoint_path=None):
+    def __init__(self, load_checkpoint_path=None, save_checkpoint_folder=None):
         self.model = CelesteAI()
         self.reward_tracker = RewardTracker()
         self.log_probs = []     # Log probs of actions taken during the current episode
@@ -18,10 +20,13 @@ class AiTrainer (BaseAiTrainer):
             lr=1e-3
         )
 
-        if checkpoint_path:
-            self.load_model(checkpoint_path)
+        if load_checkpoint_path:
+            self.load_model(load_checkpoint_path)
+
+        self.save_model_folder = save_checkpoint_folder
 
         self.batch_losses = []  # Store losses for each episode in the batch
+        self.batch_number = 0  # Track the number of batches processed
 
     def next_state(self, player_state):
         """Met à jour les actions du joueur en fonction de l'état actuel.
@@ -48,13 +53,12 @@ class AiTrainer (BaseAiTrainer):
         # Perform training step if we have accumulated enough episodes
         if len(self.batch_losses) >= self.batch_size:
             self._perform_training_step()
+            if self.save_model_folder:
+                self.save_model(path.join(self.save_model_folder, f"checkpoint_{self.batch_number}.pth"))  # Save the model after each training batch
+            self.batch_number += 1
 
         self.log_probs.clear()
         self.reward_tracker.reset()  # Reset the reward tracker for the next sequence
-
-    def end_session(self, save_checkpoint_path=None):
-        if save_checkpoint_path:
-            self.save_model(save_checkpoint_path)
 
     def save_model(self, checkpoint_path):
         os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)

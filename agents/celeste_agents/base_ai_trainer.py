@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class BaseAiTrainer (ABC):
     @abstractmethod
-    def __init__(self, checkpoint_path=None):
+    def __init__(self, load_checkpoint_path=None, save_checkpoint_folder=None):
         pass
 
     @abstractmethod
@@ -14,5 +14,5 @@ class BaseAiTrainer (ABC):
         pass
 
     @abstractmethod
-    def end_session(self, save_checkpoint_path=None):
+    def save_model(self, checkpoint_path):
         pass
